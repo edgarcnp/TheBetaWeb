@@ -3,6 +3,21 @@
 
 {% block content %}
 
-    <h1>Home</h1>
+    <div>
+        {% for room in rooms %}
+            <div>
+                <span>
+                    @{{ room.host.username }}
+                </span>
+                <h5>
+                    {{ room.id }} -- <a href="{% url 'room' room.id %}">{{ room.name }}</a>
+                </h5>
+                <small>
+                    {{ room.description }}
+                </small>
+            <hr>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock content %}

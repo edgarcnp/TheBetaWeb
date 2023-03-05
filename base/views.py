@@ -6,11 +6,12 @@ from .models import Room
 
 
 def home(request):
-    respond = {}
+    rooms = Room.objects.all()
+    respond = {"rooms": rooms}
     return render(request, "base/home.html", respond)
 
 
 def room(request, room_id):
     rooms = Room.objects.get(id=room_id)
-    respond = {"room_name": rooms.name, "room_description": rooms.description}
+    respond = {"rooms": rooms}
     return render(request, "base/room.html", respond)
