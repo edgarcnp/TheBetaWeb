@@ -1,5 +1,3 @@
-{% include 'navbar.html' %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +5,10 @@
     <title>TheBetaWeb</title>
 </head>
 <body>
-    <h1>Home</h1>
+{% include "navbar.html" %}
+
+{% block content %}
+
+{% endblock content%}
 </body>
 </html>
