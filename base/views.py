@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
+from .models import Room
 
 # Create your views here.
 
 
 def home(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    respond = {}
+    return render(request, "base/home.html", respond)
 
 
-def room(request, room):
-    return HttpResponse(f"You're looking at room {room}.")
+def room(request, room_id):
+    rooms = Room.objects.all()
+    respond = {"room_name": rooms.name, "room_description": rooms.description}
+    return render(request, "base/room.html", respond)
