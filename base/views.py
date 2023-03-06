@@ -1,7 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import RoomForm
@@ -11,6 +14,11 @@ from .models import Room, Topic
 
 
 def login_page(request):
+    page = "login"
+
+    if request.user.is_authenticated:
+        return redirect("home")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -29,13 +37,51 @@ def login_page(request):
         else:
             messages.error(request, "Username OR password is incorrect")
 
-    respond = {}
+    respond = {"page": page}
     return render(request, "base/login_register.html", respond)
 
 
 def logout_user(request):
     logout(request)
     return redirect("home")
+
+
+def register_page(request):
+    page = "register"
+    form = UserCreationForm()
+
+    if request.user.is_authenticated:
+        return redirect("home")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        password2 = request.POST.get("password2")
+
+        if password == password2:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Username is taken")
+                return redirect("register")
+
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, "Email is taken")
+                return redirect("register")
+
+            else:
+                user = User.objects.create_user(
+                    username=username, email=email, password=password
+                )
+                user.save()
+                messages.success(request, "Account was created for " + username)
+                return redirect("login")
+
+        else:
+            messages.error(request, "Password do not match")
+            return redirect("register")
+
+    respond = {"page": page, "form": form}
+    return render(request, "base/login_register.html", respond)
 
 
 def home(request):
@@ -57,6 +103,7 @@ def room(request, room_id):
     return render(request, "base/room.html", respond)
 
 
+@login_required(login_url="login")
 def create_room(request):
     form = None
     if request.method == "POST":
@@ -69,9 +116,13 @@ def create_room(request):
     return render(request, "base/room_form.html", respond)
 
 
+@login_required(login_url="login")
 def update_room(request, room_id):
     room_update = Room.objects.get(id=room_id)
     form = RoomForm(instance=room_update)
+
+    if request.user != room_update.host:
+        return HttpResponse("You are not allowed to do that!")
 
     if request.method == "POST":
         form = RoomForm(request.POST, instance=room_update)
@@ -85,6 +136,10 @@ def update_room(request, room_id):
 
 def delete_room(request, room_id):
     room_delete = Room.objects.get(id=room_id)
+
+    if request.user != room_delete.host:
+        return HttpResponse("You are not allowed to do that!")
+
     if request.method == "POST":
         room_delete.delete()
         return redirect("home")
