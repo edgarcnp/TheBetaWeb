@@ -1,3 +1,3 @@
 # TheBetaWeb
 
-[![Super-Linter](https://github.com/PecorinoDev/TheBetaWeb/actions/workflows/superlinter.yml/badge.svg)](https://github.com/PecorinoDev/TheBetaWeb/actions/workflows/superlinter.yml)
+[![Code Validation](https://github.com/PecorinoDev/TheBetaWeb/actions/workflows/superlinter-main.yml/badge.svg)](https://github.com/PecorinoDev/TheBetaWeb/actions/workflows/superlinter-main.yml)
