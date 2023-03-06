@@ -1,14 +1,16 @@
 from django.shortcuts import redirect, render
 
 from .forms import RoomForm
-from .models import Room
+from .models import Room, Topic
 
 # Create your views here.
 
 
 def home(request):
     rooms = Room.objects.all()
-    respond = {"rooms": rooms}
+    topics = Topic.objects.all()
+
+    respond = {"rooms": rooms, "topics": topics}
     return render(request, "base/home.html", respond)
 
 
@@ -19,6 +21,7 @@ def room(request, room_id):
 
 
 def create_room(request):
+    form = None
     if request.method == "POST":
         form = RoomForm(request.POST)
         if form.is_valid():
