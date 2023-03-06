@@ -1,24 +1,22 @@
 ---
-name: Super-Linter
+name: PR
 
 on: 
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
   super-lint:
-    name: Lint
+    name: Lint - PR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3
 
       - name: Super-Linter
         uses: docker://github/super-linter:latest
         env:
           DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: '^base/migrations/.*'
+          FILTER_REGEX_EXCLUDE: ".*base/migrations/.*"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
