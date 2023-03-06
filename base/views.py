@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -31,6 +31,11 @@ def login_page(request):
 
     respond = {}
     return render(request, "base/login_register.html", respond)
+
+
+def logout_user(request):
+    logout(request)
+    return redirect("home")
 
 
 def home(request):
