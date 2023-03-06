@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
@@ -17,15 +17,18 @@ def login_page(request):
         password = request.POST.get("password")
 
         try:
-            user = User.objects.get(username=username)
-            if user.check_password(password):
-                login(request, user)
-                return redirect("home")
-            else:
-                messages.info(request, "Username OR password is incorrect")
+            User.objects.get(username=username)
 
         except User.DoesNotExist:
-            messages.info(request, "User does not exist")
+            messages.error(request, "User does not exist")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            messages.error(request, "Username OR password is incorrect")
 
     respond = {}
     return render(request, "base/login_register.html", respond)
