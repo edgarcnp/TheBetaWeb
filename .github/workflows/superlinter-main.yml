@@ -1,0 +1,21 @@
+---
+name: Super-Linter - PR
+
+on: 
+  push:
+    branches: [main]
+
+jobs:
+  super-lint:
+    name: Lint - PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Super-Linter
+        uses: docker://github/super-linter:latest
+        env:
+          DEFAULT_BRANCH: main
+          FILTER_REGEX_EXCLUDE: ".*base/migrations/.*"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
