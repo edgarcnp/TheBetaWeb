@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.db.models import Q
 
 from .forms import RoomForm
 from .models import Room, Topic
@@ -7,7 +8,12 @@ from .models import Room, Topic
 
 
 def home(request):
-    rooms = Room.objects.all()
+    query = request.GET.get("q") if request.GET.get("q") else ""
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains=query) |
+        Q(name__icontains=query) |
+        Q(description__icontains=query)
+    )
     topics = Topic.objects.all()
 
     respond = {"rooms": rooms, "topics": topics}
