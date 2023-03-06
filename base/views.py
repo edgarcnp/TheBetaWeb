@@ -1,10 +1,34 @@
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
 
 from .forms import RoomForm
 from .models import Room, Topic
 
+
 # Create your views here.
+
+
+def login_page(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(username=username)
+            if user.check_password(password):
+                login(request, user)
+                return redirect("home")
+            else:
+                messages.info(request, "Username OR password is incorrect")
+
+        except User.DoesNotExist:
+            messages.info(request, "User does not exist")
+
+    respond = {}
+    return render(request, "base/login_register.html", respond)
 
 
 def home(request):
