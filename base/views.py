@@ -54,31 +54,17 @@ def register_page(request):
         return redirect("home")
 
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        password2 = request.POST.get("password2")
-
-        if password == password2:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, "Username is taken")
-                return redirect("register")
-
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, "Email is taken")
-                return redirect("register")
-
-            else:
-                user = User.objects.create_user(
-                    username=username, email=email, password=password
-                )
-                user.save()
-                messages.success(request, "Account was created for " + username)
-                return redirect("login")
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = form.cleaned_data.get("username").lower()
+            user.save()
+            messages.success(request, "Account was created for " + user.username)
+            login(request, user)
+            return redirect("home")
 
         else:
-            messages.error(request, "Password do not match")
-            return redirect("register")
+            messages.error(request, "An error has occurred during registration")
 
     respond = {"page": page, "form": form}
     return render(request, "base/login_register.html", respond)
