@@ -1,5 +1,5 @@
 ---
-name: Super-Linter - PR
+name: Code Validation
 
 on: 
   push:
@@ -7,11 +7,11 @@ on:
 
 jobs:
   super-lint:
-    name: Lint - PR
+    name: Lint - main
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@latest
 
       - name: Super-Linter
         uses: docker://github/super-linter:latest
