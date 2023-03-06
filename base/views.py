@@ -41,3 +41,13 @@ def update_room(request, room_id):
 
     respond = {"form": form}
     return render(request, "base/room_form.html", respond)
+
+
+def delete_room(request, room_id):
+    room_delete = Room.objects.get(id=room_id)
+    if request.method == "POST":
+        room_delete.delete()
+        return redirect("home")
+
+    respond = {"item": room_delete}
+    return render(request, "base/delete.html", respond)
