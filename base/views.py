@@ -85,6 +85,7 @@ def home(request):
 
 def room(request, room_id):
     rooms = Room.objects.get(id=room_id)
+
     respond = {"rooms": rooms}
     return render(request, "base/room.html", respond)
 
