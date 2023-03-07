@@ -17,6 +17,6 @@ jobs:
         uses: docker://github/super-linter:latest
         env:
           DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: ".*base/migrations/.*|*.html|*.css"
+          FILTER_REGEX_EXCLUDE: ".*base/migrations\.*|.html*|.css*"gm
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
