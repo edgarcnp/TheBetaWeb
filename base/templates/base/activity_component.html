@@ -7,9 +7,7 @@
         <p>
             {{ message.body }} | in {{ message.room.name }}
         </p>
-        <span>
-                        @{{ message.user.username }}
-                    </span>
+        <a href="{% url 'user-profile' message.user.id %}">@{{ message.user.username }}</a>
         <small>
             {{ message.created|timesince }} ago
         </small>
