@@ -56,7 +56,7 @@ if (dropdownButton) {
 // Upload Image
 const photoInput = document.querySelector('#avatar')
 const photoPreview = document.querySelector('#preview-avatar')
-if (photoInput){
+if (photoInput) {
   photoInput.onchange = () => {
     const [file] = photoInput.files
     if (file) {
