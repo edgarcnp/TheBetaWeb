@@ -125,14 +125,22 @@ def user_profile(request, user_id):
 
 @login_required(login_url="login")
 def create_room(request):
-    form = None
-    if request.method == "POST":
-        form = RoomForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
+    form = RoomForm()
+    topics = Topic.objects.all()
 
-    respond = {"form": form}
+    if request.method == "POST":
+        topic_name = request.POST.get("topic")
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+        Room.objects.create(
+            host=request.user,
+            topic=topic,
+            name=request.POST.get("name"),
+            description=request.POST.get("description"),
+        )
+        return redirect("home")
+
+    respond = {"form": form, "topics": topics}
     return render(request, "base/room_form.html", respond)
 
 
@@ -145,40 +153,30 @@ def update_room(request, room_id):
         return HttpResponse("You are not allowed to do that!")
 
     if request.method == "POST":
-        form = RoomForm(request.POST, instance=room_update)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
+        topic_name = request.POST.get("topic")
+        topic, created = Topic.objects.get_or_create(name=topic_name)
 
-    respond = {"form": form}
+        room_update.name = request.POST.get("name")
+        room_update.description = request.POST.get("description")
+        room_update.topic = topic
+        room_update.save()
+
+        return redirect("home")
+
+    respond = {"form": form, "room": room_update}
     return render(request, "base/room_form.html", respond)
 
 
 @login_required(login_url="login")
-def delete_room(request, room_id):
-    room_delete = Room.objects.get(id=room_id)
+def delete_obj(request, obj_id):
+    obj_delete = Room.objects.get(id=obj_id)
 
-    if request.user != room_delete.host:
+    if request.user != obj_delete.host:
         return HttpResponse("You are not allowed to do that!")
 
     if request.method == "POST":
-        room_delete.delete()
+        obj_delete.delete()
         return redirect("home")
 
-    respond = {"item": room_delete}
-    return render(request, "base/delete.html", respond)
-
-
-@login_required(login_url="login")
-def delete_message(request, message_id):
-    room_message = Message.objects.get(id=message_id)
-
-    if request.user != room_message.user:
-        return HttpResponse("You are not allowed to do that!")
-
-    if request.method == "POST":
-        room_message.delete()
-        return redirect("home")
-
-    respond = {"item": room_message}
+    respond = {"item": obj_delete}
     return render(request, "base/delete.html", respond)
