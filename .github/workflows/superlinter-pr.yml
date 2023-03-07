@@ -20,3 +20,5 @@ jobs:
           FILTER_REGEX_EXCLUDE: /.*(base\/migrations|static\/images|\.github|\.vscode|\.html|\.css|pull_request_template).*/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_CSS: false
+          VALIDATE_HTML: false
