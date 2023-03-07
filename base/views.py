@@ -153,12 +153,17 @@ def update_room(request, room_id):
         return HttpResponse("You are not allowed to do that!")
 
     if request.method == "POST":
-        form = RoomForm(request.POST, instance=room_update)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
+        topic_name = request.POST.get("topic")
+        topic, created = Topic.objects.get_or_create(name=topic_name)
 
-    respond = {"form": form}
+        room_update.name = request.POST.get("name")
+        room_update.description = request.POST.get("description")
+        room_update.topic = topic
+        room_update.save()
+
+        return redirect("home")
+
+    respond = {"form": form, "room": room_update}
     return render(request, "base/room_form.html", respond)
 
 
