@@ -44,7 +44,7 @@
                                     </g>
                                 </svg>
                             </a>
-                            <a href="{% url 'delete-room' rooms.id %}">
+                            <a href="{% url 'delete' rooms.id %}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                                     <title>remove</title>
                                     <path
@@ -81,25 +81,27 @@
                                             <a href="{% url 'user-profile' message.user.id %}"
                                                class="thread__authorInfo">
                                                 <div class="avatar avatar--small">
-                                                    <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                                                    <img src="https://randomuser.me/api/portraits/men/37.jpg"  alt="avatar"/>
                                                 </div>
                                                 <span>@{{ message.user.username }}</span>
                                             </a>
                                             <span class="thread__date">{{ message.created|timesince }} ago</span>
                                         </div>
-                                        <div class="thread__delete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                                                <title>remove</title>
-                                                <path
-                                                        d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
-                                                ></path>
-                                            </svg>
-                                        </div>
+                                        {% if message.user == request.user or request.user.is_staff %}
+                                            <a href="{% url 'delete' message.id %}">
+                                                <div class="thread__delete">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                                        <title>remove</title>
+                                                        <path
+                                                                d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
+                                                        ></path>
+                                                    </svg>
+                                                </div>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                     <div class="thread__details">
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque nobis, deserunt cum quibusdam aliquam
-                                        nihil unde et impedit, quaerat! Corporis praesentium aspernatur autem laboriosam natus similique,
-                                        adipisci nam maxime.
+                                        {{ message.body }}
                                     </div>
                                 </div>
                             {% endfor %}
@@ -107,7 +109,11 @@
                     </div>
                 </div>
                 <div class="room__message">
-                    <form action="#"><input name="" placeholder="Write your message here..." /></form>
+                    <form action="#">
+                        <label>
+                            <input name="" placeholder="Write your message here..." />
+                        </label>
+                    </form>
                 </div>
             </div>
             <!-- Room End -->
