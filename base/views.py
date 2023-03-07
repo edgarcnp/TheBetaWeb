@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import RoomForm
-from .models import Room, Topic, Message
+from .models import Message, Room, Topic
 
 
 # Create your views here.
@@ -79,9 +79,7 @@ def home(request):
         | Q(description__icontains=query)
     )
     topics = Topic.objects.all()
-    room_messages = Message.objects.filter(
-        Q(room__topic__name__icontains=query)
-    )
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=query))
 
     respond = {"rooms": rooms, "topics": topics, "messages": room_messages}
     return render(request, "base/home.html", respond)
@@ -98,15 +96,16 @@ def room(request, room_id):
 
         message = request.POST.get("body")
         if message:
-            Message.objects.create(
-                user=request.user,
-                room=get_room,
-                body=message)
+            Message.objects.create(user=request.user, room=get_room, body=message)
             return redirect("room", room_id=room_id)
 
         get_room.participants.add(request.user)
 
-    respond = {"rooms": get_room, "messages": user_messages, "participants": participants}
+    respond = {
+        "rooms": get_room,
+        "messages": user_messages,
+        "participants": participants
+    }
     return render(request, "base/room.html", respond)
 
 
@@ -116,7 +115,12 @@ def user_profile(request, user_id):
     user_messages = get_user.message_set.all()
     user_topics = Topic.objects.all()
 
-    respond = {"user": get_user, "rooms": user_rooms, "messages": user_messages, "topics": user_topics}
+    respond = {
+        "user": get_user,
+        "rooms": user_rooms,
+        "messages": user_messages,
+        "topics": user_topics
+    }
     return render(request, "base/profile.html", respond)
 
 
