@@ -103,7 +103,7 @@ def room(request, room_id):
     respond = {
         "rooms": get_room,
         "messages": user_messages,
-        "participants": participants
+        "participants": participants,
     }
     return render(request, "base/room.html", respond)
 
@@ -118,7 +118,7 @@ def user_profile(request, user_id):
         "user": get_user,
         "rooms": user_rooms,
         "messages": user_messages,
-        "topics": user_topics
+        "topics": user_topics,
     }
     return render(request, "base/profile.html", respond)
 
