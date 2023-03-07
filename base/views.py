@@ -8,7 +8,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import RoomForm
-from .models import Room, Topic
+from .models import Room, Topic, Message
+
 
 # Create your views here.
 
@@ -84,9 +85,23 @@ def home(request):
 
 
 def room(request, room_id):
-    rooms = Room.objects.get(id=room_id)
+    get_room = Room.objects.get(id=room_id)
+    user_messages = get_room.message_set.all().order_by("-created")
 
-    respond = {"rooms": rooms}
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponse("You must be logged in to do that!")
+
+        message = request.POST.get("body")
+        if message:
+            user = request.user
+            Message.objects.create(
+                user=user,
+                room=get_room,
+                body=message)
+            return redirect("room", room_id=room_id)
+
+    respond = {"rooms": get_room, "messages": user_messages}
     return render(request, "base/room.html", respond)
 
 

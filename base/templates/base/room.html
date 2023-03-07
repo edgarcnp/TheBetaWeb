@@ -3,6 +3,37 @@
 
 {% block content %}
 
-<h1>{{ rooms.name }}</h1>
+    <h1>{{ rooms.name }}</h1>
+
+    <p>{{ rooms.description }}</p>
+
+    <div class="comment-wrapper">
+        <h3>Messages</h3>
+        {% for message in messages %}
+            <hr>
+            <p>{{ message.body }}</p>
+            <p>@{{ message.user }} - {{ message.created|timesince }} ago</p>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <div class="comment-form">
+        <form method="POST" action="">
+        {% csrf_token %}
+            {% if request.user.is_authenticated %}
+                <label>
+                    <textarea name="body" placeholder="Message {{ rooms.name }}"></textarea>
+                </label>
+                <input type="submit" value="Send">
+            {% else %}
+                <label>
+                    <textarea name="body" placeholder="Message {{ rooms.name }}" disabled></textarea>
+                </label>
+                <input type="submit" value="Send" disabled>
+                <p><a href="{% url 'login' %}">Login</a> to send a message</p>
+            {% endif %}
+        </form>
+    </div>
+
 
 {% endblock content %}
