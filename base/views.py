@@ -79,14 +79,18 @@ def home(request):
         | Q(description__icontains=query)
     )
     topics = Topic.objects.all()
+    room_messages = Message.objects.filter(
+        Q(room__topic__name__icontains=query)
+    )
 
-    respond = {"rooms": rooms, "topics": topics}
+    respond = {"rooms": rooms, "topics": topics, "messages": room_messages}
     return render(request, "base/home.html", respond)
 
 
 def room(request, room_id):
     get_room = Room.objects.get(id=room_id)
     user_messages = get_room.message_set.all().order_by("-created")
+    participants = get_room.participants.all()
 
     if request.method == "POST":
         if not request.user.is_authenticated:
@@ -94,14 +98,15 @@ def room(request, room_id):
 
         message = request.POST.get("body")
         if message:
-            user = request.user
             Message.objects.create(
-                user=user,
+                user=request.user,
                 room=get_room,
                 body=message)
             return redirect("room", room_id=room_id)
 
-    respond = {"rooms": get_room, "messages": user_messages}
+        get_room.participants.add(request.user)
+
+    respond = {"rooms": get_room, "messages": user_messages, "participants": participants}
     return render(request, "base/room.html", respond)
 
 
@@ -136,6 +141,7 @@ def update_room(request, room_id):
     return render(request, "base/room_form.html", respond)
 
 
+@login_required(login_url="login")
 def delete_room(request, room_id):
     room_delete = Room.objects.get(id=room_id)
 
@@ -147,4 +153,19 @@ def delete_room(request, room_id):
         return redirect("home")
 
     respond = {"item": room_delete}
+    return render(request, "base/delete.html", respond)
+
+
+@login_required(login_url="login")
+def delete_message(request, message_id):
+    room_message = Message.objects.get(id=message_id)
+
+    if request.user != room_message.user:
+        return HttpResponse("You are not allowed to do that!")
+
+    if request.method == "POST":
+        room_message.delete()
+        return redirect("home")
+
+    respond = {"item": room_message}
     return render(request, "base/delete.html", respond)
