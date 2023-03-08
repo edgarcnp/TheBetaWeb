@@ -96,9 +96,8 @@ def room(request, room_id):
         message = request.POST.get("body")
         if message:
             Message.objects.create(user=request.user, room=get_room, body=message)
+            get_room.participants.add(request.user)
             return redirect("room", room_id=room_id)
-
-        get_room.participants.add(request.user)
 
     respond = {
         "rooms": get_room,
@@ -182,9 +181,9 @@ def delete_obj(request, obj_type, obj_id):
 
     if request.method == "POST":
         obj_delete.delete()
-        return redirect("home")
+        return redirect(request.META.get("HTTP_REFERER", "home"))
 
-    respond = {"item": obj_delete}
+    respond = {"obj": obj_delete, "obj_type": obj_type}
     return render(request, "base/delete.html", respond)
 
 
