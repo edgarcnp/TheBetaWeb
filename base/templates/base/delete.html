@@ -6,7 +6,7 @@
     <form method="POST" action="">
         {% csrf_token %}
     <p>Are you sure you want to delete "{{ item }}"?</p>
-        <a href="{{ request.META.HTTP_REFERRER }}">Go Back</a>
+        <a href="{% url 'home' %}">Go Back</a>
     <input type="submit" value="Confirm">
     </form>
 

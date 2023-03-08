@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render
 from .forms import RoomForm, UserForm
 from .models import Message, Room, Topic
 
+
 # Create your views here.
 
 
@@ -168,11 +169,17 @@ def update_room(request, room_id):
 
 
 @login_required(login_url="login")
-def delete_obj(request, obj_id):
-    obj_delete = Room.objects.get(id=obj_id)
-
-    if request.user != obj_delete.host:
-        return HttpResponse("You are not allowed to do that!")
+def delete_obj(request, obj_type, obj_id):
+    if obj_type == "room":
+        obj_delete = Room.objects.get(id=obj_id)
+        if request.user != obj_delete.host:
+            return HttpResponse("You are not allowed to do that!")
+    elif obj_type == "message":
+        obj_delete = Message.objects.get(id=obj_id)
+        if request.user != obj_delete.user:
+            return HttpResponse("You are not allowed to do that!")
+    else:
+        return HttpResponse("Invalid object type!")
 
     if request.method == "POST":
         obj_delete.delete()
