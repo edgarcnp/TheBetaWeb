@@ -183,7 +183,7 @@ def delete_obj(request, obj_type, obj_id):
         obj_delete.delete()
         return redirect("home")
 
-    respond = {"item": obj_delete}
+    respond = {"obj": obj_delete, "obj_type": obj_type}
     return render(request, "base/delete.html", respond)
 
 
