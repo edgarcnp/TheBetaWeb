@@ -10,7 +10,6 @@ from django.shortcuts import redirect, render
 from .forms import RoomForm, UserForm
 from .models import Message, Room, Topic
 
-
 # Create your views here.
 
 
