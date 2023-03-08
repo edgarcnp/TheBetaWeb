@@ -12,4 +12,5 @@ urlpatterns = [
     path("register/", views.register_page, name="register"),
     path("room/<str:room_id>", views.room, name="room"),
     path("update-room/<str:room_id>", views.update_room, name="update-room"),
+    path("update-user/", views.update_user, name="update-user"),
 ]
