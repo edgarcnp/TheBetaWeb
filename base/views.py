@@ -77,7 +77,7 @@ def home(request):
         | Q(name__icontains=query)
         | Q(description__icontains=query)
     )
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=query))
 
     respond = {"rooms": rooms, "topics": topics, "messages": room_messages}
@@ -202,3 +202,18 @@ def update_user(request):
 
     respond = {"form": form}
     return render(request, "base/update-user.html", respond)
+
+
+def topic_page(request):
+    query = request.GET.get("q") if request.GET.get("q") else ""
+    topics = Topic.objects.filter(name__icontains=query)
+
+    respond = {"topics": topics}
+    return render(request, "base/topics.html", respond)
+
+
+def activity_page(request):
+    room_messages = Message.objects.all().order_by("-created")
+
+    respond = {"messages": room_messages}
+    return render(request, "base/activity.html", respond)
