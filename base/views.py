@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import RoomForm
+from .forms import RoomForm, UserForm
 from .models import Message, Room, Topic
 
 # Create your views here.
@@ -168,11 +168,17 @@ def update_room(request, room_id):
 
 
 @login_required(login_url="login")
-def delete_obj(request, obj_id):
-    obj_delete = Room.objects.get(id=obj_id)
-
-    if request.user != obj_delete.host:
-        return HttpResponse("You are not allowed to do that!")
+def delete_obj(request, obj_type, obj_id):
+    if obj_type == "room":
+        obj_delete = Room.objects.get(id=obj_id)
+        if request.user != obj_delete.host:
+            return HttpResponse("You are not allowed to do that!")
+    elif obj_type == "message":
+        obj_delete = Message.objects.get(id=obj_id)
+        if request.user != obj_delete.user:
+            return HttpResponse("You are not allowed to do that!")
+    else:
+        return HttpResponse("Invalid object type!")
 
     if request.method == "POST":
         obj_delete.delete()
@@ -180,3 +186,20 @@ def delete_obj(request, obj_id):
 
     respond = {"item": obj_delete}
     return render(request, "base/delete.html", respond)
+
+
+@login_required(login_url="login")
+def update_user(request):
+    user_update = request.user
+    form = UserForm(instance=user_update)
+
+    if request.method == "POST":
+        form = UserForm(request.POST, instance=user_update)
+        if form.is_valid():
+            user_update = form.save(commit=False)
+            user_update.username = form.cleaned_data.get("username").lower()
+            user_update.save()
+            return redirect("user-profile", user_id=user_update.id)
+
+    respond = {"form": form}
+    return render(request, "base/update-user.html", respond)

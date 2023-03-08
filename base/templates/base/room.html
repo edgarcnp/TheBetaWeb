@@ -22,7 +22,6 @@
                         <div class="room__topRight">
                             <a href="{% url 'update-room' rooms.id %}">
                                 <svg
-                                        enable-background="new 0 0 24 24"
                                         height="32"
                                         viewBox="0 0 24 24"
                                         width="32"
@@ -44,7 +43,7 @@
                                     </g>
                                 </svg>
                             </a>
-                            <a href="{% url 'delete' rooms.id %}">
+                            <a href="{% url 'delete' obj_type='room' obj_id=rooms.id %}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                                     <title>remove</title>
                                     <path
@@ -78,8 +77,7 @@
                                 <div class="thread">
                                     <div class="thread__top">
                                         <div class="thread__author">
-                                            <a href="{% url 'user-profile' message.user.id %}"
-                                               class="thread__authorInfo">
+                                            <a href="{% url 'user-profile' message.user.id %}" class="thread__authorInfo">
                                                 <div class="avatar avatar--small">
                                                     <img src="https://randomuser.me/api/portraits/men/37.jpg"  alt="avatar"/>
                                                 </div>
@@ -88,7 +86,7 @@
                                             <span class="thread__date">{{ message.created|timesince }} ago</span>
                                         </div>
                                         {% if message.user == request.user or request.user.is_staff %}
-                                            <a href="{% url 'delete' message.id %}">
+                                            <a href="{% url 'delete' obj_type='message' obj_id=message.id %}">
                                                 <div class="thread__delete">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                                                         <title>remove</title>
@@ -109,9 +107,10 @@
                     </div>
                 </div>
                 <div class="room__message">
-                    <form action="#">
+                    <form action="" method="POST">
+                        {% csrf_token %}
                         <label>
-                            <input name="" placeholder="Write your message here..." />
+                            <input name="body" placeholder="Write your message here..." />
                         </label>
                     </form>
                 </div>
@@ -138,5 +137,5 @@
             <!--  End -->
         </div>
     </main>
-    <script src="script.js"></script>
 {% endblock content %}
+
