@@ -181,7 +181,7 @@ def delete_obj(request, obj_type, obj_id):
 
     if request.method == "POST":
         obj_delete.delete()
-        return redirect("home")
+        return redirect(request.META.get("HTTP_REFERER", "home"))
 
     respond = {"obj": obj_delete, "obj_type": obj_type}
     return render(request, "base/delete.html", respond)
