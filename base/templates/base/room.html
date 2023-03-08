@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 {% extends 'main.html' %}
-{% load static %}
 
 {% block content %}
     <main class="profile-page layout layout--2">
@@ -23,7 +22,6 @@
                         <div class="room__topRight">
                             <a href="{% url 'update-room' rooms.id %}">
                                 <svg
-                                        enable-background="new 0 0 24 24"
                                         height="32"
                                         viewBox="0 0 24 24"
                                         width="32"
@@ -140,5 +138,5 @@
             <!--  End -->
         </div>
     </main>
-    <script src="{% static 'js/script.js' %}"></script>
 {% endblock content %}
+
