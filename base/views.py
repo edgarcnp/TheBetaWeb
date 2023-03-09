@@ -14,8 +14,6 @@ from .models import Message, Room, Topic
 
 
 def login_page(request):
-    page = "login"
-
     if request.user.is_authenticated:
         return redirect("home")
 
@@ -37,8 +35,8 @@ def login_page(request):
         else:
             messages.error(request, "Username OR password is incorrect")
 
-    respond = {"page": page}
-    return render(request, "base/login_register.html", respond)
+    respond = {}
+    return render(request, "base/login.html", respond)
 
 
 def logout_user(request):
@@ -47,7 +45,6 @@ def logout_user(request):
 
 
 def register_page(request):
-    page = "register"
     form = UserCreationForm()
 
     if request.user.is_authenticated:
@@ -66,8 +63,8 @@ def register_page(request):
         else:
             messages.error(request, "An error has occurred during registration")
 
-    respond = {"page": page, "form": form}
-    return render(request, "base/login_register.html", respond)
+    respond = {"form": form}
+    return render(request, "base/register.html", respond)
 
 
 def home(request):
