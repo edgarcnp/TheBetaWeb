@@ -15,11 +15,10 @@
     let roomsContainer = document.getElementById('rooms-container')
 
     let getRooms = async () => {
-        let response  = await fetch('http://127.0.0.1:8000/api/rooms')
-        let rooms = await response.json()
+        let response  = await fetch('http://127.0.0.1:8000/api/rooms').json()
         
-        for (i = 0; rooms.length > i; i++) {
-            let room = rooms[i]
+        for (i = 0; response.length > i; i++) {
+            let room = response[i]
             let row = `<div class="room">
                             <h3>${room.name}</h3>        
                         </div>`
